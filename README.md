@@ -1,41 +1,62 @@
-# Material UI - Vite example in TypeScript
+# Alivio App - Frontend (WEB)
 
-## How to use
+Frontend WEB desarrollado para la clase de **UX mejoramiento de la experiencia de usuario**
 
-Download the example [or clone the repo](https://github.com/mui/material-ui):
+## 🚀 Instalación y Ejecución
 
-<!-- #target-branch-reference -->
+### Prerrequisitos
+- Node.js (versión 20.19 o superior)
+- pnpm o npm
 
-```bash
-curl https://codeload.github.com/mui/material-ui/tar.gz/master | tar -xz --strip=2 material-ui-master/examples/material-ui-vite-ts
-cd material-ui-vite-ts
-```
+Recomendamos el uso de `nvm` para gestionar versiones de Node.js.
 
-Install it and run:
+### Pasos para ejecutar
 
-```bash
-npm install
-npm run dev
-```
+<!-- Info to use nvm -->
+> [!IMPORTANT]
+> Si usas `nvm`, asegúrate de tener la versión correcta de Node.js instalada y activa: `nvm install 20.19`\
 
-or:
+1. **Instalar dependencias**
+   ```bash
+   pnpm install
+    # o si usas npm
+   npm install
+   ```
 
-<!-- #target-branch-reference -->
+2. **Ejecutar en modo desarrollo**
+   ```bash
+   pnpm dev
+   # o si usas npm
+   npm run dev
+   ```
 
-[![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/sandbox/github/mui/material-ui/tree/master/examples/material-ui-vite-ts)
+3. **Construir para producción**
+   ```bash
+   pnpm build
+   # o si usas npm
+   npm run build
+   ```
 
-[![Edit on StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/mui/material-ui/tree/master/examples/material-ui-vite-ts)
+4. **Previsualizar build de producción**
+   ```bash
+   pnpm preview
+   # o si usas npm
+   npm run preview
+   ```
 
-## The idea behind the example
+## 🛠️ Tecnologías
 
-<!-- #host-reference -->
+- **React 18** - Biblioteca de interfaz de usuario
+- **Material-UI (MUI)** - Componentes de diseño
+- **Vite** - Herramienta de construcción
+- **TypeScript** - Tipado estático
+- **React Router** - Navegación
 
-This example demonstrates how you can use Material UI with [Vite](https://vite.dev) in [TypeScript](https://github.com/Microsoft/TypeScript).
-It includes `@mui/material` and its peer dependencies, including [Emotion](https://emotion.sh/docs/introduction), the default style engine in Material UI.
+## 📱 Funcionalidades Desarrolladas
 
-## What's next?
+- Log in de usuario
+- Sign up de usuario
+- Ver lista de alarmas
+- Crear una alarma
 
-<!-- #host-reference -->
-
-You now have a working example project.
-You can head back to the documentation and continue by browsing the [templates](https://mui.com/material-ui/getting-started/templates/) section.
+La aplicación estará disponible en `http://localhost:5173`
