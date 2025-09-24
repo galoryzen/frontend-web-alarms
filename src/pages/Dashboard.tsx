@@ -7,10 +7,17 @@ import {
   Chip,
   Divider,
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import { Add, Delete } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import { DataGrid, GridColDef, Toolbar } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, Toolbar, GridRowSelectionModel } from "@mui/x-data-grid";
+import { useState } from "react";
+
+interface CustomToolbarProps {
+  hasSelection: boolean;
+  enableDelete: boolean;
+  disableEdit: boolean;
+}
 
 const columns: GridColDef[] = [
   { field: "nombre", headerName: "Nombre", flex: 1, sortable: true },
@@ -38,8 +45,12 @@ const columns: GridColDef[] = [
   },
 ];
 
-function customToolbar() {
+function customToolbar({ hasSelection, enableDelete, disableEdit }: CustomToolbarProps) {
   const navigate = useNavigate();
+
+  const handleDelete = () => {
+    console.log("Alerta eliminada correctamente");
+  }
 
   return (
     <Toolbar>
@@ -51,11 +62,25 @@ function customToolbar() {
           bgcolor: "background.paper",
         }}
       >
+        {enableDelete && (
+          <Button
+            disabled={!enableDelete}
+            variant="outlined"
+            onClick={() => handleDelete()}
+            sx={{
+              textTransform: "none",
+              fontWeight: 600,
+              px: 3,
+              mr: 2,
+            }}
+          >
+            {"BORRAR"}
+          </Button>
+        )}
         <Button
+          disabled={disableEdit}
           variant="contained"
-          startIcon={<Add />}
-          onClick={() => navigate("/add-alarm")}
-
+          onClick={() => navigate(hasSelection ? "/edit-alarm" : "/add-alarm")}
           sx={{
             bgcolor: "primary.main",
             "&:hover": {
@@ -66,7 +91,7 @@ function customToolbar() {
             px: 3,
           }}
         >
-          AGREGAR
+          {hasSelection ? "EDITAR" : "AGREGAR"}
         </Button>
       </Box>
     </Toolbar>
@@ -96,6 +121,8 @@ const rows = [
 ];
 
 export default function Dashboard() {
+  const [selectedRows, setSelectedRows] = useState<GridRowSelectionModel>([] as unknown as GridRowSelectionModel);
+
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
       <Sidebar selectedItem="alarmas" />
@@ -131,7 +158,18 @@ export default function Dashboard() {
             }}
             checkboxSelection
             disableRowSelectionOnClick
-            slots={{ toolbar: customToolbar }}
+            onRowSelectionModelChange={(selection) => {
+              setSelectedRows(selection);
+            }}
+            slots={{
+              toolbar: () => customToolbar(
+                {
+                  hasSelection: selectedRows?.ids?.size > 0 || false,
+                  enableDelete: selectedRows?.ids?.size > 0 || false,
+                  disableEdit: selectedRows?.ids?.size > 1 || false,
+
+                })
+            }}
             showToolbar
           />
         </Box>
