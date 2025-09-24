@@ -6,17 +6,19 @@ import {
   Link,
   Chip,
   Divider,
+  Snackbar,
+  Alert,
 } from "@mui/material";
-import { Add, Delete } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import { DataGrid, GridColDef, Toolbar, GridRowSelectionModel } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, Toolbar, GridRowSelectionModel, GridRowModel } from "@mui/x-data-grid";
 import { useState } from "react";
 
 interface CustomToolbarProps {
   hasSelection: boolean;
   enableDelete: boolean;
   disableEdit: boolean;
+  onDelete: () => void;
 }
 
 const columns: GridColDef[] = [
@@ -45,11 +47,11 @@ const columns: GridColDef[] = [
   },
 ];
 
-function customToolbar({ hasSelection, enableDelete, disableEdit }: CustomToolbarProps) {
+function customToolbar({ hasSelection, enableDelete, disableEdit, onDelete }: CustomToolbarProps) {
   const navigate = useNavigate();
 
   const handleDelete = () => {
-    console.log("Alerta eliminada correctamente");
+    onDelete();
   }
 
   return (
@@ -98,30 +100,30 @@ function customToolbar({ hasSelection, enableDelete, disableEdit }: CustomToolba
   );
 }
 
-const rows = [
-  {
-    id: 1,
-    nombre: "Clase",
-    hora: "9:10 AM",
-    periodicidad: "Lunes, Martes y Miercoles",
-    equipo: "Surgery",
-  },
-  {
-    id: 2,
-    nombre: "Gimnasio",
-    hora: "12:30 PM",
-    periodicidad: "Todos los dias",
-  },
-  {
-    id: 3,
-    nombre: "Dormir",
-    hora: "12:00 AM",
-    periodicidad: "Viernes",
-  },
-];
-
 export default function Dashboard() {
   const [selectedRows, setSelectedRows] = useState<GridRowSelectionModel>([] as unknown as GridRowSelectionModel);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [rows, setRows] = useState<GridRowModel[]>([
+    {
+      id: 1,
+      nombre: "Clase",
+      hora: "9:10 AM",
+      periodicidad: "Lunes, Martes y Miercoles",
+      equipo: "Surgery",
+    },
+    {
+      id: 2,
+      nombre: "Gimnasio",
+      hora: "12:30 PM",
+      periodicidad: "Todos los dias",
+    },
+    {
+      id: 3,
+      nombre: "Dormir",
+      hora: "12:00 AM",
+      periodicidad: "Viernes",
+    },
+  ]);
 
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
@@ -167,13 +169,26 @@ export default function Dashboard() {
                   hasSelection: selectedRows?.ids?.size > 0 || false,
                   enableDelete: selectedRows?.ids?.size > 0 || false,
                   disableEdit: selectedRows?.ids?.size > 1 || false,
-
+                  onDelete: () => {
+                    setSnackbarOpen(true);
+                    setRows((prevRows) => prevRows.filter((row) => !selectedRows.ids.has(row.id)));
+                  },
                 })
             }}
             showToolbar
           />
         </Box>
       </Box>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ width: "100%" }}>
+          {selectedRows?.ids?.size === 1 ? "Alerta eliminada correctamente" : "Alerta elimadas correctamente"}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
