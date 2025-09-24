@@ -8,6 +8,7 @@ import SignUp from "./pages/SignUp.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import Verify from "./pages/Verify.tsx";
 import AddAlarm from "./pages/AddAlarm.tsx";
+import EditAlarm from "./pages/EditAlarm.tsx";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "./theme.ts";
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
     path: "/add-alarm",
     element: <AddAlarm />,
   },
+  {
+    path: "/edit-alarm",
+    element: <EditAlarm />,
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

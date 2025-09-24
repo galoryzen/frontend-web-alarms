@@ -15,10 +15,9 @@ import { DataGrid, GridColDef, Toolbar, GridRowSelectionModel, GridRowModel } fr
 import { useState } from "react";
 
 interface CustomToolbarProps {
-  hasSelection: boolean;
-  enableDelete: boolean;
-  disableEdit: boolean;
   onDelete: () => void;
+  rows: GridRowModel[];
+  selectedRows: GridRowSelectionModel;
 }
 
 const columns: GridColDef[] = [
@@ -47,11 +46,38 @@ const columns: GridColDef[] = [
   },
 ];
 
-function customToolbar({ hasSelection, enableDelete, disableEdit, onDelete }: CustomToolbarProps) {
+function customToolbar({ selectedRows, onDelete, rows }: CustomToolbarProps) {
   const navigate = useNavigate();
 
   const handleDelete = () => {
     onDelete();
+  }
+
+  const handleAddOrEdit = () => {
+    if (selectedRows?.ids?.size === 1) {
+      const selectedId = Array.from(selectedRows.ids)[0];
+      const alarm = rows.find((row) => row.id === selectedId);
+      localStorage.setItem("alarm", JSON.stringify(alarm));
+      navigate("/edit-alarm");
+    } else {
+      navigate("/add-alarm");
+    }
+  }
+
+  const getDisableEdit = () => {
+    if(selectedRows?.ids?.size >= 1) {
+      return selectedRows?.ids?.size > 1;
+    }
+
+    return false;
+  }
+
+  const getLabel = () => {
+    if(selectedRows?.ids?.size >= 1) {
+      return "EDITAR";
+    }
+
+    return "AGREGAR";
   }
 
   return (
@@ -64,9 +90,8 @@ function customToolbar({ hasSelection, enableDelete, disableEdit, onDelete }: Cu
           bgcolor: "background.paper",
         }}
       >
-        {enableDelete && (
+        {selectedRows?.ids?.size > 0 && (
           <Button
-            disabled={!enableDelete}
             variant="outlined"
             onClick={() => handleDelete()}
             sx={{
@@ -80,9 +105,9 @@ function customToolbar({ hasSelection, enableDelete, disableEdit, onDelete }: Cu
           </Button>
         )}
         <Button
-          disabled={disableEdit}
+          disabled={getDisableEdit()}
           variant="contained"
-          onClick={() => navigate(hasSelection ? "/edit-alarm" : "/add-alarm")}
+          onClick={handleAddOrEdit}
           sx={{
             bgcolor: "primary.main",
             "&:hover": {
@@ -93,7 +118,7 @@ function customToolbar({ hasSelection, enableDelete, disableEdit, onDelete }: Cu
             px: 3,
           }}
         >
-          {hasSelection ? "EDITAR" : "AGREGAR"}
+          {getLabel()}
         </Button>
       </Box>
     </Toolbar>
@@ -166,12 +191,11 @@ export default function Dashboard() {
             slots={{
               toolbar: () => customToolbar(
                 {
-                  hasSelection: selectedRows?.ids?.size > 0 || false,
-                  enableDelete: selectedRows?.ids?.size > 0 || false,
-                  disableEdit: selectedRows?.ids?.size > 1 || false,
+                  selectedRows: selectedRows,
+                  rows: rows,
                   onDelete: () => {
                     setSnackbarOpen(true);
-                    setRows((prevRows) => prevRows.filter((row) => !selectedRows.ids.has(row.id)));
+                    setRows((prevRows) => prevRows.filter((row) => !selectedRows?.ids?.has(row.id)));
                   },
                 })
             }}

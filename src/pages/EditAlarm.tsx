@@ -11,13 +11,81 @@ import {
   MenuItem,
   InputAdornment,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import { Add, Group, Home } from "@mui/icons-material";
+import { Edit, Group, Home } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import dayjs, { Dayjs } from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
-export default function AddAlarm() {
+interface Alarma {
+  id: number;
+  nombre: string;
+  hora: string;
+  periodicidad: string;
+  equipo: string;
+}
+
+export default function EditAlarm() {
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [alarm, setAlarm] = useState<Alarma>({} as Alarma);
+  const [time, setTime] = useState<Dayjs | null>(null);
+  const [equipo, setEquipo] = useState<string>("");
+
+  function parseDays(text: string): string[] {
+    const normalized = text.toLowerCase().trim();
+
+    const dayMap: Record<string, string> = {
+      "lunes": "lun",
+      "martes": "mar",
+      "miércoles": "mie",
+      "miercoles": "mie",
+      "jueves": "jue",
+      "viernes": "vie",
+      "sábado": "sab",
+      "sabado": "sab",
+      "domingo": "dom",
+    };
+
+    if (normalized.includes("todos los dias") || normalized.includes("todos los días")) {
+      return Object.values(dayMap);
+    }
+
+    const result: string[] = [];
+    for (const [day, code] of Object.entries(dayMap)) {
+      if (normalized.includes(day)) {
+        result.push(code);
+      }
+    }
+
+    return result;
+  }
+
+  dayjs.extend(customParseFormat);
+
+  function parseTime(input: string) {
+    const normalized = input
+      .trim()
+      .replace(/\s*(am|pm)$/i, (_, p1) => " " + p1.toUpperCase());
+
+    const parsed = dayjs(normalized, ["h:mm A", "hh:mm A"], true);
+    return parsed.isValid() ? parsed : null;
+  }
+
+
+
+  useEffect(() => {
+    const alarm = JSON.parse(localStorage.getItem("alarm") || "{}") as Alarma;
+    setAlarm(alarm);
+    setSelectedDays(parseDays(alarm.periodicidad));
+    setEquipo(alarm.equipo);
+
+    const time = parseTime(alarm.hora);
+
+    if (time) {
+      setTime(time);
+    }
+  }, []);
 
   const days = [
     { id: "lun", label: "LUN" },
@@ -59,13 +127,13 @@ export default function AddAlarm() {
                 Alarmas
               </Link>
               <Typography color="text.primary">
-                <Add sx={{ mb: -0.35, mr: 1 }} fontSize="inherit" />
-                Crear Alarma
+                <Edit sx={{ mb: -0.35, mr: 1 }} fontSize="inherit" />
+                Editar Alarma
               </Typography>
             </Breadcrumbs>
           </Box>
 
-          <Typography variant="h4">Crear Alarma</Typography>
+          <Typography variant="h4">Editar Alarma</Typography>
 
           <Divider sx={{ marginTop: "8px", marginBottom: "32px" }} />
         </Box>
@@ -92,12 +160,13 @@ export default function AddAlarm() {
               p: 2,
             }}
           >
-            <TextField label="Nombre" variant="outlined" />
+            <TextField label="Nombre" variant="outlined" value={alarm.nombre} />
 
             <TextField
               label="Hora"
               type="time"
               variant="outlined"
+              value={time?.format("HH:mm")}
               slotProps={{
                 inputLabel: {
                   shrink: true,
@@ -141,6 +210,7 @@ export default function AddAlarm() {
             <TextField
               label="Fecha de inicio"
               type="date"
+              value="2025-06-15"
               variant="outlined"
               slotProps={{
                 inputLabel: {
@@ -153,7 +223,13 @@ export default function AddAlarm() {
               select
               label="Equipo"
               variant="outlined"
-              defaultValue="default"
+              value={equipo}
+              onChange={(e) =>
+                setAlarm((prev: any) => ({
+                  ...prev,
+                  equipo: e.target.value,
+                }))
+              }
               slotProps={{
                 input: {
                   startAdornment: (
@@ -164,7 +240,8 @@ export default function AddAlarm() {
                 },
               }}
             >
-              <MenuItem value="default" disabled>Selecciona un equipo</MenuItem>
+              <MenuItem value="">Selecciona un equipo</MenuItem>
+              {alarm.equipo && <MenuItem value={alarm.equipo}>{alarm.equipo}</MenuItem>}
               <MenuItem value="equipo1">Equipo 1</MenuItem>
               <MenuItem value="equipo2">Equipo 2</MenuItem>
               <MenuItem value="equipo3">Equipo 3</MenuItem>
@@ -172,7 +249,7 @@ export default function AddAlarm() {
 
             <Box sx={{ display: "flex", justifyContent: "left" }}>
               <Button type="submit" variant="contained" sx={{ height: 36 }}>
-                Crear Alarma
+                Editar Alarma
               </Button>
             </Box>
           </Box>
