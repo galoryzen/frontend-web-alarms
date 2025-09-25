@@ -11,7 +11,13 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import { DataGrid, GridColDef, Toolbar, GridRowSelectionModel, GridRowModel } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  Toolbar,
+  GridRowSelectionModel,
+  GridRowModel,
+} from "@mui/x-data-grid";
 import { useState } from "react";
 
 interface CustomToolbarProps {
@@ -51,7 +57,7 @@ function customToolbar({ selectedRows, onDelete, rows }: CustomToolbarProps) {
 
   const handleDelete = () => {
     onDelete();
-  }
+  };
 
   const handleAddOrEdit = () => {
     if (selectedRows?.ids?.size === 1) {
@@ -62,23 +68,23 @@ function customToolbar({ selectedRows, onDelete, rows }: CustomToolbarProps) {
     } else {
       navigate("/add-alarm");
     }
-  }
+  };
 
   const getDisableEdit = () => {
-    if(selectedRows?.ids?.size >= 1) {
+    if (selectedRows?.ids?.size >= 1) {
       return selectedRows?.ids?.size > 1;
     }
 
     return false;
-  }
+  };
 
   const getLabel = () => {
-    if(selectedRows?.ids?.size >= 1) {
+    if (selectedRows?.ids?.size >= 1) {
       return "EDITAR";
     }
 
     return "AGREGAR";
-  }
+  };
 
   return (
     <Toolbar>
@@ -126,7 +132,9 @@ function customToolbar({ selectedRows, onDelete, rows }: CustomToolbarProps) {
 }
 
 export default function Dashboard() {
-  const [selectedRows, setSelectedRows] = useState<GridRowSelectionModel>([] as unknown as GridRowSelectionModel);
+  const [selectedRows, setSelectedRows] = useState<GridRowSelectionModel>(
+    [] as unknown as GridRowSelectionModel
+  );
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [rows, setRows] = useState<GridRowModel[]>([
     {
@@ -189,15 +197,17 @@ export default function Dashboard() {
               setSelectedRows(selection);
             }}
             slots={{
-              toolbar: () => customToolbar(
-                {
+              toolbar: () =>
+                customToolbar({
                   selectedRows: selectedRows,
                   rows: rows,
                   onDelete: () => {
                     setSnackbarOpen(true);
-                    setRows((prevRows) => prevRows.filter((row) => !selectedRows?.ids?.has(row.id)));
+                    setRows((prevRows) =>
+                      prevRows.filter((row) => !selectedRows?.ids?.has(row.id))
+                    );
                   },
-                })
+                }),
             }}
             showToolbar
           />
@@ -209,8 +219,14 @@ export default function Dashboard() {
         onClose={() => setSnackbarOpen(false)}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
-        <Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ width: "100%" }}>
-          {selectedRows?.ids?.size === 1 ? "Alerta eliminada correctamente" : "Alerta elimadas correctamente"}
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          {selectedRows?.ids?.size == 1
+            ? "Alarma eliminada correctamente"
+            : "Alarmas eliminadas correctamente"}
         </Alert>
       </Snackbar>
     </Box>
