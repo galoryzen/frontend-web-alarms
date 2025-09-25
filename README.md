@@ -2,6 +2,10 @@
 
 Frontend WEB desarrollado para la clase de **UX mejoramiento de la experiencia de usuario**
 
+## Miembros del equipo
+- Isaac Alejandro Blanco Amador [AlejandroBlanco2001](https://github.com/AlejandroBlanco2001)
+- Raúl José López Grau [galoryzen](https://github.com/galoryzen)
+
 ## 🚀 Instalación y Ejecución
 
 ### Prerrequisitos
@@ -30,19 +34,8 @@ Recomendamos el uso de `nvm` para gestionar versiones de Node.js.
    npm run dev
    ```
 
-3. **Construir para producción**
-   ```bash
-   pnpm build
-   # o si usas npm
-   npm run build
-   ```
-
-4. **Previsualizar build de producción**
-   ```bash
-   pnpm preview
-   # o si usas npm
-   npm run preview
-   ```
+3. **Acceder a la aplicación**
+   Abre tu navegador y ve a `http://localhost:5173`
 
 ## 🛠️ Tecnologías
 
@@ -58,5 +51,20 @@ Recomendamos el uso de `nvm` para gestionar versiones de Node.js.
 - Sign up de usuario
 - Ver lista de alarmas
 - Crear una alarma
+- Editar una alarma
+- Eliminar una alarma
 
-La aplicación estará disponible en `http://localhost:5173`
+## 📋 Consideraciones
+
+Esta aplicación es un prototipo NO funcional, por lo que no cuenta con conexión a una base de datos ni backend, ni persistencia de datos. Es únicamente una maquetación para fines de demostración y UI/UX.
+
+## 👥 Distribución de tareas
+
+| Tarea               | Miembro del equipo           |
+| ------------------- | ---------------------------- |
+| Log in              | Raúl José López Grau         |
+| Sign up             | Raúl José López Grau         |
+| Ver alarmas         | Raúl José López Grau         |
+| Crear una alarma    | Raúl José López Grau         |
+| Editar una alarma   | Isaac Alejanro Blanco Amador |
+| Eliminar una alarma | Isaac Alejanro Blanco Amador |
