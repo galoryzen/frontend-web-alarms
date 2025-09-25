@@ -18,6 +18,11 @@ import {
   GridRowSelectionModel,
   GridRowModel,
 } from "@mui/x-data-grid";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import { useState } from "react";
 
 interface CustomToolbarProps {
@@ -131,11 +136,68 @@ function customToolbar({ selectedRows, onDelete, rows }: CustomToolbarProps) {
   );
 }
 
+function AlertDialog({
+  open,
+  setOpen,
+  onConfirm,
+  selectedCount
+}: {
+  open: boolean,
+  setOpen: (open: boolean) => void,
+  onConfirm: () => void,
+  selectedCount: number
+}) {
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleConfirm = () => {
+    onConfirm();
+    setOpen(false);
+  };
+
+  return (
+    <>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"¿Eliminar esta alarma?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {`¿Estás seguro de que deseas eliminar esta alarma? Esta acción es irreversible. Todos los equipos que tengan esta alarma también perderánla alarma`}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={handleConfirm} autoFocus color="error">
+            Eliminar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+}
+
 export default function Dashboard() {
   const [selectedRows, setSelectedRows] = useState<GridRowSelectionModel>(
     [] as unknown as GridRowSelectionModel
   );
+  const [alertDialogOpen, setAlertDialogOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const handleDeleteConfirm = () => {
+    setSnackbarOpen(true);
+    setRows((prevRows) =>
+      prevRows.filter((row) => !selectedRows?.ids?.has(row.id))
+    );
+    setSelectedRows([] as unknown as GridRowSelectionModel);
+  };
+
   const [rows, setRows] = useState<GridRowModel[]>([
     {
       id: 1,
@@ -202,10 +264,7 @@ export default function Dashboard() {
                   selectedRows: selectedRows,
                   rows: rows,
                   onDelete: () => {
-                    setSnackbarOpen(true);
-                    setRows((prevRows) =>
-                      prevRows.filter((row) => !selectedRows?.ids?.has(row.id))
-                    );
+                    setAlertDialogOpen(true);
                   },
                 }),
             }}
@@ -213,6 +272,12 @@ export default function Dashboard() {
           />
         </Box>
       </Box>
+      <AlertDialog
+        open={alertDialogOpen}
+        setOpen={setAlertDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        selectedCount={selectedRows?.ids?.size || 0}
+      />
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={3000}
